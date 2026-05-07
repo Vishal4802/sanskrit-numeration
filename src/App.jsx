@@ -152,7 +152,7 @@ function Key({ dev, sub, color, bgBase, bgHov, borderBase, borderHov, onClick })
         boxShadow: hov ? `0 2px 14px ${bgHov}` : "none",
       }}>
       <span style={{ fontSize: 22, lineHeight: 1.2, color, fontFamily: "'Noto Sans Devanagari', serif" }}>{dev}</span>
-      <span style={{ fontSize: 8, marginTop: 3, color: "rgba(255,255,255,0.28)", fontFamily: "monospace", letterSpacing: "0.04em" }}>{sub}</span>
+      <span style={{ fontSize: 10, marginTop: 0, color: "rgba(255,255,255,0.28)", fontFamily: "monospace", letterSpacing: "0.04em" }}>{sub}</span>
     </button>
   );
 }
