@@ -169,7 +169,7 @@ function Toast({ msg, onClose }) {
         padding: "32px 40px", textAlign: "center", maxWidth: 340,
         boxShadow: "0 20px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(200,168,74,0.1)",
       }}>
-        <div style={{ fontSize: 32, marginBottom: 12 }}>🕉</div>
+        <div style={{ fontSize: 32, marginBottom: 12 }}>Note:</div>
         <p style={{ fontSize: 13, color: "#E8D8A0", lineHeight: 1.7, fontFamily: "Georgia, serif", fontStyle: "italic", marginBottom: 20 }}>{msg}</p>
         <button onClick={onClose} style={{
           padding: "8px 24px", borderRadius: 8, fontSize: 11, letterSpacing: "2px",
