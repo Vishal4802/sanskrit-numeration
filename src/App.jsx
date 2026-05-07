@@ -63,25 +63,23 @@ function isPending(tok) {
 }
 
 // ─── Aryabhata ─────────────────────────────────────────────────────────────────
-// Returns null if any standalone vowel found (not supported)
-
+// Now strictly requires vowelBase to be present.
 function calcArya(tokens) {
-  if (tokens.some(t => t.type === "vowel")) return null; // standalone vowel → error
-
+  // We remove the internal fallback to "अ" to ensure the data is explicit
   const steps = [];
   let total = 0;
+  
   for (const tok of tokens) {
     const consSum = tok.consonants.reduce((a, b) => a + (CONS_MAP[b]?.aryaVal ?? 0), 0);
-    const vowelBase = tok.vowelBase ?? "अ";
-    const v = VOWEL_MAP[vowelBase];
+    const v = VOWEL_MAP[tok.vowelBase]; // No ?? "अ" here anymore
     const exp = v.aryaExp;
     const mult = Math.pow(10, exp);
     const val = consSum * mult;
     const consParts = tok.consonants.map(c => `${c}=${CONS_MAP[c]?.aryaVal}`).join(" + ");
-    const implicitNote = tok.vowelBase ? "" : " [अ implicit]";
+    
     steps.push({
       display: tok.display,
-      detail: `(${consParts}) × 10^${exp}${implicitNote} = ${consSum} × ${fmtN(mult)} = ${fmtN(val)}`,
+      detail: `(${consParts}) × 10^${exp} = ${consSum} × ${fmtN(mult)} = ${fmtN(val)}`,
       val,
     });
     total += val;
@@ -246,21 +244,32 @@ export default function SanskritCalculator() {
 
   const clearAll = () => { setTokens([]); setResult(null); setShowSteps(false); };
 
-  const calculate = (sys) => {
-    if (!tokens.length) return;
-    setShowSteps(false);
-    if (sys === "arya") {
-      const r = calcArya(tokens);
-      if (r === null) {
-        setToast("Āryabhaṭa's numeral system operates on syllables (consonant + vowel). Standalone vowels without a preceding consonant are not used in this system.");
-        return;
-      }
-      setResult({ sys, ...r });
-    } else {
-      setResult({ sys, ...calcKata(tokens) });
+const calculate = (sys) => {
+  if (!tokens.length) return;
+  setShowSteps(false);
+
+  if (sys === "arya") {
+    // 1. Check for standalone vowels (e.g., 'इ' by itself)
+    if (tokens.some(t => t.type === "vowel")) {
+      setToast("Āryabhaṭa's numeral system operates on syllables (consonant + vowel). Standalone vowels without a preceding consonant are not supported.");
+      return;
     }
-    setAnimKey(k => k + 1);
-  };
+
+    // 2. Check for standalone consonants / pending syllables (e.g., 'क्' at the end)
+    if (tokens.some(t => t.vowelBase === null)) {
+      setToast("In the Āryabhaṭa system, every consonant must be paired with a vowel to determine its magnitude. Please add a vowel to the trailing consonant.");
+      return;
+    }
+
+    const r = calcArya(tokens);
+    setResult({ sys, ...r });
+  } else {
+    // Kaṭapayādi usually treats standalone consonants as 0 or ignores them, 
+    // so we keep the current logic there.
+    setResult({ sys, ...calcKata(tokens) });
+  }
+  setAnimKey(k => k + 1);
+};
 
   const wordDisplay = tokens.map(t => t.display).join("");
   const isArya = result?.sys === "arya";
