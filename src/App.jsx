@@ -310,7 +310,7 @@ const calculate = (sys) => {
             WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent",
             marginBottom:6, lineHeight:1.4,
           }}>
-            Ancient Sanskrit Numerology
+            Ancient Sanskrit Decoding
           </h1>
           <p style={{ fontSize:11, letterSpacing:"4px", color:"rgba(255,255,255,0.2)", fontFamily:"Georgia,serif" }}>
             Āryabhaṭa  ·  Kaṭapayādi
